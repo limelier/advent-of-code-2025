@@ -1,0 +1,34 @@
+cabal-version:      3.0
+
+name:               aoc25
+version:            0.1.0.0
+license:            MIT
+license-file:       LICENSE
+author:             limelier
+maintainer:         limelier@pm.me
+build-type:         Simple
+
+common warnings
+    ghc-options: -Wall
+
+library
+    import:           warnings
+    exposed-modules:  
+        Days.Day01,
+        Days.Day02
+    build-depends:    
+        base ^>=4.18.3.0,
+        split
+    hs-source-dirs:   src
+    default-language: Haskell2010
+    
+executable aoc25
+    import:           warnings
+    main-is:          Main.hs
+    -- other-modules:
+    -- other-extensions:
+    build-depends:    
+        base ^>=4.18.3.0, 
+        aoc25
+    hs-source-dirs:   app
+    default-language: Haskell2010
