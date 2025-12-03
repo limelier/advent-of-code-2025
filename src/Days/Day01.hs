@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 module Days.Day01 (solve) where
 
 solve :: String -> (Int, Int)
