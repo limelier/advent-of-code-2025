@@ -24,22 +24,28 @@ part2 input = do
     let results = map solveEquation equations
     sum results
 
+-- parse a bunch of numbers at once
 readMany :: [String] -> [Int]
 readMany = map read
 
+-- parse operators. haskell is kinda cool here im ngl
 readOperator :: String -> Int -> Int -> Int
 readOperator "+" = (+)
 readOperator "*" = (*)
 
+-- delete all spaces in a string
 deleteSpaces :: String -> String
 deleteSpaces = filter (/=' ')
 
+-- solve an equation by folding the operator over all the operands
 solveEquation :: ([Int], Int -> Int -> Int) -> Int
 solveEquation (x:xs, op) = foldr op x xs
 
+-- parse strings to an equation
 equationFromStrings :: ([String], String) -> ([Int], Int -> Int -> Int)
 equationFromStrings (xs, op) = (readMany xs, readOperator op)
 
+-- get both init and last at the same time
 initLast :: [a] -> ([a], a)
 initLast [x] = ([], x)
 initLast (x:xs) = (x:xs', y) where (xs', y) = initLast xs
