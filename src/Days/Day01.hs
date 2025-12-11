@@ -1,27 +1,36 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
+
 module Days.Day01 (solve) where
+
 
 solve :: String -> (Int, Int)
 solve input = do
-  let instructions = lines input
-  (doSpins instructions 50 0, 0)
+  let instructions = map numericInstruction $ lines input
+  doSpins 50 instructions 0 0
 
---- part 1
--- doSpins instructions position zeroes -> zeroes
-doSpins :: [String] -> Int -> Int -> Int
-doSpins [] _ zeroes = zeroes
-doSpins (ins : rest) pos zeroes =
-  if newPos == 0
-    then doSpins rest newPos (zeroes + 1)
-    else doSpins rest newPos zeroes
-  where
-    newPos = doSpin ins pos
+-- translate R## to ##, and L## to -##
+numericInstruction :: String -> Int
+numericInstruction ('R' : t) = read t
+numericInstruction ('L' : t) = -read t
 
--- doSpin instruction position -> newPos
-doSpin :: String -> Int -> Int
-doSpin (lr : num) pos = (pos + lrMult lr * read num) `mod` 100
-
---- common
-lrMult :: Char -> Int
-lrMult 'R' = 1
-lrMult 'L' = -1
+-- starting from pos (1), apply instructions (2)
+-- accumulating zeroes between instructions in (3), returning in (5)
+-- accumulating all encountered zeroes in (4), returning in (6)
+--- zeroesBetween are counted when the instruction is done, zeroes once the next instruction starts or none are left
+doSpins :: Int -> [Int] -> Int -> Int -> (Int, Int)
+-- base case: instructions done
+doSpins 0 [] zeroesBetween zeroes = (zeroesBetween, zeroes + 1)
+doSpins _ [] zeroesBetween zeroes = (zeroesBetween, zeroes)
+-- handle wrap-around first
+doSpins (-1) instrs zeroesBetween zeroes = doSpins 99 instrs zeroesBetween zeroes
+doSpins 100 instrs zeroesBetween zeroes = doSpins 0 instrs zeroesBetween zeroes
+-- current instruction is done
+-- - ... on a zero
+doSpins 0 (0 : instrTail) zeroesBetween zeroes = doSpins 0 instrTail (zeroesBetween + 1) zeroes
+-- - ... not on a zero
+doSpins pos (0 : instrTail) zeroesBetween zeroes = doSpins pos instrTail zeroesBetween zeroes
+-- current instruction is not done
+doSpins pos (instr : instrTail) zeroesBetween zeroes =
+  let (pos', instr') = if instr > 0 then (pos + 1 `mod` 100, instr - 1) else (pos - 1, instr + 1)
+      zeroes' = if pos == 0 then zeroes + 1 else zeroes
+   in doSpins pos' (instr' : instrTail) zeroesBetween zeroes'
