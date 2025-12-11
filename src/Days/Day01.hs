@@ -18,12 +18,12 @@ numericInstruction ('L' : t) = -read t
 -- accumulating all encountered zeroes in (4), returning in (6)
 --- zeroesBetween are counted when the instruction is done, zeroes once the next instruction starts or none are left
 doSpins :: Int -> [Int] -> Int -> Int -> (Int, Int)
--- base case: instructions done
-doSpins 0 [] zeroesBetween zeroes = (zeroesBetween, zeroes + 1)
-doSpins _ [] zeroesBetween zeroes = (zeroesBetween, zeroes)
 -- handle wrap-around first
 doSpins (-1) instrs zeroesBetween zeroes = doSpins 99 instrs zeroesBetween zeroes
 doSpins 100 instrs zeroesBetween zeroes = doSpins 0 instrs zeroesBetween zeroes
+-- base case: instructions done
+doSpins 0 [] zeroesBetween zeroes = (zeroesBetween, zeroes + 1)
+doSpins _ [] zeroesBetween zeroes = (zeroesBetween, zeroes)
 -- current instruction is done
 -- - ... on a zero
 doSpins 0 (0 : instrTail) zeroesBetween zeroes = doSpins 0 instrTail (zeroesBetween + 1) zeroes
